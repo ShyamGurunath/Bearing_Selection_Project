@@ -116,6 +116,8 @@ def design_safe_or_not(cfind, new_dia_values):
         return st.warning(f"Select a greater diamter")
 
 
+
+
 bearing, e = load_data()
 show_data(bearing, e)
 user = user_input()
@@ -127,3 +129,16 @@ try:
     design_safe_or_not(cfind, new_dia_values)
 except:
     st.error("Enter the parameters")
+
+import streamlit.components.v1 as components
+
+# >>> import plotly.express as px
+# >>> fig = px.box(range(10))
+# >>> fig.write_html('test.html')
+
+st.header("test html import")
+
+
+
+
+# components.iframe("http://lib-project.readthedocs.io/")
