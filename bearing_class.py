@@ -8,7 +8,6 @@ import altair as alt
 import numpy as np
 from PIL import Image
 
-
 @st.cache()
 def load_data():
     bearing = pd.read_excel("Book2.xlsx")
@@ -30,22 +29,19 @@ def load_data():
 
 
 def show_data(bearing, e):
-    st.title("Bearing Selection & Life Capacity")
-    st.subheader("20-100mm Diameter")
     # original data frame
     return st.dataframe(bearing)
 
 
 def user_selection(bearing):
-    st.sidebar.markdown("## User Selection")
-    dia = st.sidebar.selectbox("Select the diameter", bearing.d.unique())
+    dia = st.selectbox("Select the diameter", bearing.d.unique())
     new_dia_values = bearing[bearing.d == dia]
-    l = st.sidebar.selectbox("Select the designation",
+    l = st.radio("Select the designation",
                              list(new_dia_values.Designation))
     new_dia_values = new_dia_values[new_dia_values.Designation == l]
     dD_mean = (new_dia_values.d + new_dia_values.D)/2
 
-    st.sidebar.dataframe(new_dia_values.T)
+    st.dataframe(new_dia_values.T)
     # choose_designation = int(input("Select designation from above: "))
     # new_dia_values = bearing[bearing.Designation==choose_designation]
     return new_dia_values,dD_mean
@@ -53,10 +49,10 @@ def user_selection(bearing):
 
 def selection_type():
     iso = pd.read_excel("Book3.xlsx")
-    l = st.sidebar.selectbox("Select the Oil Type",
+    l = st.selectbox("Select the Oil Type",
                              list(iso.ISO))
     value = iso[iso.ISO == l]['Y']
-    return st.sidebar.text(float(value)), float(value)
+    return st.text(float(value)), float(value)
 
 def find_askf(dD_mean,N,new_df):
     chhosen = new_df[new_df['N']==N]
@@ -108,24 +104,24 @@ def find_askf(dD_mean,N,new_df):
 
 def relaiblity():
     relaiblity_df = pd.read_excel("Book2 1.xlsx")
-    l = st.sidebar.selectbox("Select the Relablity Percent",
+    l = st.selectbox("Select the Relablity Percent",
                              list(relaiblity_df['Reliability']))
     value = relaiblity_df[relaiblity_df['Reliability'] == l]['a1']
-    st.sidebar.text(float(value))
+    st.text(float(value))
     return value
 
 def contamination_factor(new_dia_values,cleaniliness):
     if float(new_dia_values['dia_mean']) > 100:
         cleaniliness1 = cleaniliness.loc[:,['CONDTION','nc_dm>100']]
-        clean_choose = st.sidebar.selectbox("Select the cleanliness",list(cleaniliness1.CONDTION))
+        clean_choose = st.radio("Select the Condition",list(cleaniliness1.CONDTION))
         ηc = cleaniliness1[cleaniliness1.CONDTION == clean_choose]['nc_dm>100']
-        st.sidebar.text(float(ηc))
+        st.text(float(ηc))
         return float(ηc)
     elif float(new_dia_values['dia_mean']) < 100:
         cleaniliness1 = cleaniliness.loc[:,['CONDTION','nc_dm<100']]
-        clean_choose = st.sidebar.selectbox("Select the cleanliness",list(cleaniliness1.CONDTION))
+        clean_choose = st.radio("Select the Condition",list(cleaniliness1.CONDTION))
         ηc = cleaniliness1[cleaniliness1.CONDTION == clean_choose]['nc_dm<100']
-        st.sidebar.text(float(ηc))
+        st.text(float(ηc))
         return float(ηc)
     else:
         pass
@@ -140,8 +136,9 @@ def find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user):
         data = {"C":C,"P":P,"k":k,"ηcpu/p":ηcpup,"c/p":cp}
         c = alt.Chart(askf).mark_circle().encode(
        x='hcPup', y='askf',color='K',tooltip=['hcPup', 'askf','K'])
-        st.altair_chart(c, use_container_width=True)
+        st.info(" Graph Indicates the **askf** values for all **ηcPu/P** with respect to their visocity K! Hover over the Graph & find out the value of askf")
         st.info(f"For ηcpu/p - {ηcpup} on xaxis ,find askf in yaxis by using k - {k} (is colored) ")
+        st.altair_chart(c, use_container_width=True)
         st.json(data)
         askf = st.number_input("Enter the value for askf")
         if st.checkbox("Find Life Rating"):
@@ -151,9 +148,10 @@ def find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user):
             data = {"C":C,"P":P,"k":k,"ηcpu/p":ηcpup,"c/p":cp,"askf":askf,"Lnm":float(Lnm),"Lnmh":float(Lnmh)}
             st.json(data)
             if float(user['Life']) < float(data['Lnmh']):
-                st.success(f"The design is safe!,Since the Life rating {data['Lnmh']} is greater than actual Life {user['Life']}  ")
+                st.success(f"The design is safe!,Since the Life rating {round(data['Lnmh'],2)} is greater than actual Life {user['Life'][0]}  ")
+                st.balloons()
             elif float(user['Life']) > float(data['Lnmh']):
-                st.warning(f"The design is not safe!, Since the Since the Life rating {data['Lnmh']} is lesser than actual Life {user['Life']},Try changing the Designation to {[new_dia_values.Designation]}")
+                st.warning(f"The design is not safe!, Since the Since the Life rating {round(data['Lnmh'],2)} is lesser than actual Life {user['Life'][0]}, Try changing the Designation to {[new_dia_values.Designation]}")
 
             return data
 
@@ -183,8 +181,6 @@ def user_input():
     user = pd.DataFrame(di, index=[0])
     user_input = pd.DataFrame(di, index=[0]).T
     user_input.columns = ["InputValues"]
-    st.sidebar.markdown("## User Inputs")
-    st.sidebar.dataframe(user_input)
     return user,N
 
 
@@ -259,33 +255,44 @@ def frfa(user, kr,new_dia_values,ηc):
         st.warning("The parameters you've entered is not suitable for this program,Please change the paramaters!")
 
 
-import time
+
+
+x = st.sidebar.selectbox("Bearing Selction System",['App','About'])
+if x=="App":
+    st.title("Bearing Selection & Life Capacity")
+    st.subheader("20-100mm Diameter")
+    col1,col2,col3 = st.beta_columns([8,1,7])
+    with col3:
+        kr = pd.read_excel("kr.xlsx", header=1)
+        bearing, e,cleaniliness,new1_df,askf = load_data()
+        st.subheader("Select the Oil Type")
+        mark, y = selection_type()
+        st.subheader("Select the Reliability Factor")
+        a1 = relaiblity()
+        st.subheader("Selct the bearing Diameter")
+        new_dia_values,dD_mean = user_selection(bearing)
+
+        st.subheader("Select Conatmination Factor")
+        ηc = contamination_factor(new_dia_values,cleaniliness)
 
 
 
+    with col1:
+        if st.checkbox("Show SKF bearing data"):
+            show_data(bearing, e)
+        st.subheader("Design Parameters")
+        user,N = user_input()
+        st.markdown("## User Inputs")
+        st.table(user.T)
+    y1 = find_askf(dD_mean,N,new1_df)
 
-bearing, e,cleaniliness,new1_df,askf = load_data()
-show_data(bearing, e)
-
-mark, y = selection_type()
-a1 = relaiblity()
-user,N = user_input()
-
-new_dia_values,dD_mean = user_selection(bearing)
-y1 = find_askf(dD_mean,N,new1_df)
-
-ηc = contamination_factor(new_dia_values,cleaniliness)
-
-kr = pd.read_excel("kr.xlsx", header=1)
+    di = frfa(user,kr,new_dia_values,cleaniliness)
 
 
 
-di = frfa(user,kr,new_dia_values,cleaniliness)
-
-
-
-
-life_rating = find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user)
+    life_rating = find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user)
+elif x=="About":
+    st.title("About The Project")
 
 
 
