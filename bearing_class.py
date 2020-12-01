@@ -257,7 +257,7 @@ def frfa(user, kr,new_dia_values,ηc):
 
 
 
-x = st.sidebar.selectbox("Bearing Selction System",['App','About'])
+x = st.sidebar.selectbox("Bearing Selction System",['App','About',"Team details"])
 if x=="App":
     st.title("Bearing Selection & Life Capacity")
     st.subheader("20-100mm Diameter")
@@ -291,8 +291,28 @@ if x=="App":
 
 
     life_rating = find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user)
-elif x=="About":
-    st.title("About The Project")
+elif x=="Team details":
+    st.title("Our Team details")
+    st.markdown("BEARING Selction system PROJECT REPORT")
+    st.markdown("SUBMITTED BY")
+    st.markdown("SHYAM GURUNATH.R K-17BAU027")
+    st.markdown("DHINAKARAN.M - 18BAU315")
+    st.markdown("KESAVAN.A-18BAU326")
+    st.subheader("UNDER THE GUIDANCE OF")
+    st.markdown("Dr. SR. Sunil Gangolli")
+    st.markdown("LECTURER, HEAD OF THE DEPARTMENT/AUTOMOBILE ENGINEERING")
+    st.markdown("in partial fulfillment for the award of the degree of")
+    st.markdown("BACHELOR OF ENGINEERING In Automobile Engineering ")
+    st.markdown("Dr. Mahalingam College of Engineering and Technology Pollachi – 642003 ")
+    st.markdown("An Autonomous Institution Affiliated to Anna University")
+    st.markdown("Chennai – 600 025 September 2020")
+elif x=='About':
+    st.title("Bearing Selection System")
+    st.subheader("Abstract")
+    st.markdown("In a deep groove ball bearing first of all to select a bearing and to find out the radial load, axial load, equivalent load and then find out the life ratting factor of bearing. Designer can design a good life of bearing by using this calculation.")
+    st.markdown(" Designer are design a 100% of bearing but only 90% of bearing will be successful and 10% of bearing will be failure. The manufacture recommendation is to design a 100% of bearing to 99% of bearing will be successful to ask to designer. This one not easy for designer it’s very difficult to given output 99% of bearing become succeed and then given to user. The lots of steps involved to calculate and give good reliability given to the user this takes more time. That’s why we are plan to create a software by using python programmed in a method of web application to easy to expand bearing life time.")
+    st.markdown("In this project the user can directly use this software. User will install this software and then easily to find out the capacity of bearing by user. That’s the advantage of this software.")
+    st.markdown("After software will install by user then user can put all input data of bearing. And then automatically calculated and find out the capacity of bearing for user recommendation.")
 
 
 
