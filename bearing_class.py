@@ -308,6 +308,7 @@ elif x=="Team details":
     st.markdown("Chennai – 600 025 September 2020")
 elif x=='About':
     st.title("Bearing Selection System")
+    st.markdown("[Project Github Link!](https://github.com/ShyamGurunath/bearing_selection.git)")
     st.subheader("Abstract")
     st.markdown("In a deep groove ball bearing first of all to select a bearing and to find out the radial load, axial load, equivalent load and then find out the life ratting factor of bearing. Designer can design a good life of bearing by using this calculation.")
     st.markdown(" Designer are design a 100% of bearing but only 90% of bearing will be successful and 10% of bearing will be failure. The manufacture recommendation is to design a 100% of bearing to 99% of bearing will be successful to ask to designer. This one not easy for designer it’s very difficult to given output 99% of bearing become succeed and then given to user. The lots of steps involved to calculate and give good reliability given to the user this takes more time. That’s why we are plan to create a software by using python programmed in a method of web application to easy to expand bearing life time.")
