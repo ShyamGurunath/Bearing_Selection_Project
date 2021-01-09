@@ -145,7 +145,7 @@ def find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user):
             cp1 = float(pow(cp,3))
             Lnm = a1 * askf * cp1
             Lnmh = float(((pow(10,6))/(60*N))) * Lnm
-            data = {"C":C,"P":P,"k":k,"ηcpu/p":ηcpup,"c/p":cp,"askf":askf,"Lnm":float(Lnm),"Lnmh":float(Lnmh)}
+            data = {"C":C,"P":P,"k":k,"ηcpu/p":ηcpup,"c/p":cp,"askf":askf,"Lnm":float(Lnm),"Lnmh":float(Lnmh),"ν":y,"ν1":y1}
             st.json(data)
             if float(user['Life']) < float(data['Lnmh']):
                 st.success(f"The design is safe!,Since the Life rating {round(data['Lnmh'],2)} is greater than actual Life {user['Life'][0]}  ")
@@ -310,10 +310,8 @@ elif x=='About':
     st.title("Bearing Selection System")
     st.markdown("[Project Github Link!](https://github.com/ShyamGurunath/bearing_selection.git)")
     st.subheader("Abstract")
-    st.markdown("In a deep groove ball bearing first of all to select a bearing and to find out the radial load, axial load, equivalent load and then find out the life ratting factor of bearing. Designer can design a good life of bearing by using this calculation.")
-    st.markdown(" Designer are design a 100% of bearing but only 90% of bearing will be successful and 10% of bearing will be failure. The manufacture recommendation is to design a 100% of bearing to 99% of bearing will be successful to ask to designer. This one not easy for designer it’s very difficult to given output 99% of bearing become succeed and then given to user. The lots of steps involved to calculate and give good reliability given to the user this takes more time. That’s why we are plan to create a software by using python programmed in a method of web application to easy to expand bearing life time.")
-    st.markdown("In this project the user can directly use this software. User will install this software and then easily to find out the capacity of bearing by user. That’s the advantage of this software.")
-    st.markdown("After software will install by user then user can put all input data of bearing. And then automatically calculated and find out the capacity of bearing for user recommendation.")
+    st.markdown("The issue for engineers in today technological world is the manual efforts, that makes really tough to pace up the speed within a given time period, specifically when it comes to bearing selection process. Therefore, there are lot of manual calculation which needs to be done in selecting a bearing & determining its life expectancy.So, we have developed a web application using python & streamlit to automate the boring stuff for engineers and also help them to be create great new stuff’s, without spending too much time in math behind the scenes.Our Bearing Selection & Life expectancy web app helps users to Select only Single deep groove ball bearing & know its life expectancy by solving the math behind. The app expects user to input their impeller design parameters, choose the diameter, reliability factor, contamination factor & ISO VG (International Standards Organisation Viscosity Grade).After that, you just need to follow the given steps in the app to find the life expectancy of the bearing you’ve selected determining whether the chosen ball bearing is safe for the given impeller design or not.")
+    
 
 
 
