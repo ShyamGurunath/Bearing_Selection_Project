@@ -148,10 +148,10 @@ def find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user):
             data = {"C":C,"P":P,"k":k,"ηcpu/p":ηcpup,"c/p":cp,"askf":askf,"Lnm":float(Lnm),"Lnmh":float(Lnmh),"ν":y,"ν1":y1}
             st.json(data)
             if float(user['Life']) < float(data['Lnmh']):
-                st.success(f"The design is safe!,Since the Life rating {round(data['Lnmh'],2)} is greater than actual Life {user['Life'][0]}  ")
+                st.success(f"The design is safe!,Since the Life rating {data['Lnmh']} is greater than actual Life {user['Life'][0]}  ")
                 st.balloons()
             elif float(user['Life']) > float(data['Lnmh']):
-                st.warning(f"The design is not safe!, Since the Since the Life rating {round(data['Lnmh'],2)} is lesser than actual Life {user['Life'][0]}, Try changing the Designation to {[new_dia_values.Designation]}")
+                st.warning(f"The design is not safe!, Since the Since the Life rating {data['Lnmh']} is lesser than actual Life {user['Life'][0]}, Try changing the Designation to {[new_dia_values.Designation]}")
 
             return data
 
@@ -191,7 +191,8 @@ def frfa(user, kr,new_dia_values,ηc):
     U2 = (3.14 * user['d2'] * user['N']) / 60
     Uwr = (3.14 * user['dwr'] * user['N']) / 60
     Ush = (3.14 * user['dsh'] * user['N']) / 60
-
+    L1 = user['L1']
+    L2 = user['L2']
     nh = 0.85
     nh1 = 0.90
     g = 9.81
@@ -220,7 +221,9 @@ def frfa(user, kr,new_dia_values,ηc):
                 nsh2 = new_kr2.iloc[0][0]
                 kr_real = kr1 + (((kr1 - kr2) / (nsh1 - nsh2)) * (nsh - nsh1))
                 Fr = kr_real * P0 * user['d2'] * user['b2'][0]
-                di = {"Fr":Fr,"Fa":Fa}
+                Frb = Fr - (Fr*((L1+L2)/L1))
+                Ffb = Fr - Frb 
+                di = {"Fr":Fr,"Fa":Fa,"Frb":Frb,"Ffb":Ffb}
                 C0 = np.array(new_dia_values.C0)[0]
                 fac0 = (di['Fa'] / C0)[0]
                 fac0 = round(fac0, 2)
@@ -245,10 +248,10 @@ def frfa(user, kr,new_dia_values,ηc):
                 if st.checkbox("Show Fa/Fr & Fa/C0 Data"):
                     st.dataframe(e)
                 if st.checkbox("Calculate EquilentLoad (P)"):
-                    P = ((X * di['Fr']) + (Y * di['Fa'])) * s
+                    P = ((X * di['Ffb']) + (Y * di['Fa'])) * s
                     Pu = float(new_dia_values['Pu'])
                     st.success(f"#### EquilentLoad P is **{round(P[0],2)}** N")
-                    di1 = {"fac0":fac0,"fafr":fafr,"P":P[0],"X":X,"Y":Y,"Fr":Fr[0],"Fa":Fa[0]}
+                    di1 = {"fac0":fac0,"fafr":fafr,"P":P[0],"X":X,"Y":Y,"Fr":Fr[0],"Fa":Fa[0],"Ffb":Ffb,"Frb":Frb}
                     st.json(di1)
                     return di1
     else:
@@ -269,7 +272,7 @@ if x=="App":
         mark, y = selection_type()
         st.subheader("Select the Reliability Factor")
         a1 = relaiblity()
-        st.subheader("Selct the bearing Diameter")
+        st.subheader("Select the bearing Diameter")
         new_dia_values,dD_mean = user_selection(bearing)
 
         st.subheader("Select Conatmination Factor")
@@ -293,7 +296,7 @@ if x=="App":
     life_rating = find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user)
 elif x=="Team details":
     st.title("Our Team details")
-    st.markdown("BEARING Selction system PROJECT REPORT")
+    st.markdown("## Bearing Selction app ")
     st.markdown("SUBMITTED BY")
     st.markdown("SHYAM GURUNATH.R K-17BAU027")
     st.markdown("DHINAKARAN.M - 18BAU315")
@@ -305,7 +308,8 @@ elif x=="Team details":
     st.markdown("BACHELOR OF ENGINEERING In Automobile Engineering ")
     st.markdown("Dr. Mahalingam College of Engineering and Technology Pollachi – 642003 ")
     st.markdown("An Autonomous Institution Affiliated to Anna University")
-    st.markdown("Chennai – 600 025 September 2020")
+    st.markdown("Chennai – 600 025 ")
+    st.markdown("Jan 2021")
 elif x=='About':
     st.title("Bearing Selection System")
     st.markdown("[Project Github Link!](https://github.com/ShyamGurunath/bearing_selection.git)")
