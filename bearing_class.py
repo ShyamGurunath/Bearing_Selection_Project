@@ -208,7 +208,7 @@ def frfa(user, kr,new_dia_values,ηc):
     nsh = float((pow(10, 3)) * (user['N'] / 60) * \
             ((math.sqrt(user['Qbep'] / 1000)) /
              (pow(9.81 * user['Hbep'], 0.75))))
-    if (nsh >= 30) and (nsh <= 110):
+    if (nsh >= 30) and (nsh <= 120):
         kr['check'] = kr['nsh'].apply(lambda x: x - nsh)
         for i, y in enumerate(kr.check):
             if (kr.check[i] < 0) and (kr.check[i + 1] > 0):
@@ -223,14 +223,22 @@ def frfa(user, kr,new_dia_values,ηc):
                 Fr = kr_real * P0 * user['d2'] * user['b2'][0]
                 Frb = Fr - (Fr*((L1+L2)/L1))
                 Ffb = Fr - Frb 
-                di = {"Fr":Fr,"Fa":Fa,"Frb":Frb,"Ffb":Ffb}
                 C0 = np.array(new_dia_values.C0)[0]
+                di = {"Fr":Fr,"Fa":Fa,"Frb":Frb,"Ffb":Ffb}
                 fac0 = (di['Fa'] / C0)[0]
                 fac0 = round(fac0, 2)
                 fafr = (di['Fa'] / di['Fr'])[0]
+                di = {"Fr":round(Fr,2),"Fa":round(Fa,2),"Frb":Frb,"Ffb":Ffb,"Fac0":fac0,"Fafr":fafr}
+                st.dataframe(pd.DataFrame(di).T)
+                X = float()
+                Y = float()
                 if fafr <= 0.44:
                     X = 1
                     Y = 0
+                    st.text(f"X = {X}")
+                    st.text(f"Y = {Y}")
+                    v={"X":X,"Y":Y}
+                    st.text(v)
                 elif fafr > 0.44:
                     X = 0.56
                     if fac0 >= e['Fa/C0'][1] and fac0 <= e['Fa/C0'][2]:
@@ -243,15 +251,19 @@ def frfa(user, kr,new_dia_values,ηc):
                         Y = 1.3
                     elif fac0 >= e['Fa/C0'][5] and fac0 <= e['Fa/C0'][6]:
                         Y = 1.1
+                    st.text(f"X = {X}")
+                    st.text(f"Y = {Y}")
+                    v={"X":X,"Y":Y}
+                    st.text(v)
                 l = [1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9]
                 s = st.selectbox("Select Fos", l)
                 if st.checkbox("Show Fa/Fr & Fa/C0 Data"):
                     st.dataframe(e)
                 if st.checkbox("Calculate EquilentLoad (P)"):
-                    P = ((X * di['Ffb']) + (Y * di['Fa'])) * s
+                    P = ((X * di['Ffb']) + (v['Y'] * di['Fa'])) * s
                     Pu = float(new_dia_values['Pu'])
                     st.success(f"#### EquilentLoad P is **{round(P[0],2)}** N")
-                    di1 = {"fac0":fac0,"fafr":fafr,"P":P[0],"X":X,"Y":Y,"Fr":Fr[0],"Fa":Fa[0],"Ffb":Ffb,"Frb":Frb}
+                    di1 = {"fac0":fac0,"fafr":fafr,"P":P[0],"X":X,"Y":Y,"Fr":Fr[0],"Fa":Fa[0],"Ffb":Ffb[0],"Frb":Frb[0]}
                     st.json(di1)
                     return di1
     else:
@@ -279,7 +291,7 @@ if x=="App":
         ηc = contamination_factor(new_dia_values,cleaniliness)
 
 
-
+try:
     with col1:
         if st.checkbox("Show SKF bearing data"):
             show_data(bearing, e)
@@ -290,11 +302,10 @@ if x=="App":
     y1 = find_askf(dD_mean,N,new1_df)
 
     di = frfa(user,kr,new_dia_values,cleaniliness)
-
-
-
     life_rating = find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user)
-elif x=="Team details":
+except TypeError:
+    st.warning('Can find askf after the Equivalent load is found!')
+if x=="Team details":
     st.title("Our Team details")
     st.markdown("## Bearing Selction app ")
     st.markdown("SUBMITTED BY")
@@ -310,7 +321,7 @@ elif x=="Team details":
     st.markdown("An Autonomous Institution Affiliated to Anna University")
     st.markdown("Chennai – 600 025 ")
     st.markdown("Jan 2021")
-elif x=='About':
+if x=='About':
     st.title("Bearing Selection System")
     st.markdown("[Project Github Link!](https://github.com/ShyamGurunath/bearing_selection.git)")
     st.subheader("Abstract")
