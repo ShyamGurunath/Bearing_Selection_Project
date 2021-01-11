@@ -291,7 +291,7 @@ if x=="App":
         ηc = contamination_factor(new_dia_values,cleaniliness)
 
 
-try:
+
     with col1:
         if st.checkbox("Show SKF bearing data"):
             show_data(bearing, e)
@@ -302,9 +302,10 @@ try:
     y1 = find_askf(dD_mean,N,new1_df)
 
     di = frfa(user,kr,new_dia_values,cleaniliness)
-    life_rating = find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user)
-except TypeError:
-    st.warning('Can find askf after the Equivalent load is found!')
+    try:
+        life_rating = find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user)
+    except TypeError:
+        st.warning('Can find askf after the Equivalent load is found!')
 if x=="Team details":
     st.title("Our Team details")
     st.markdown("## Bearing Selction app ")
