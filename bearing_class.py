@@ -230,8 +230,7 @@ def frfa(user, kr,new_dia_values,ηc):
                 fafr = (di['Fa'] / di['Fr'])[0]
                 di = {"Fr":round(Fr,2),"Fa":round(Fa,2),"Frb":Frb,"Ffb":Ffb,"Fac0":fac0,"Fafr":fafr}
                 st.dataframe(pd.DataFrame(di).T)
-                X = float()
-                Y = float()
+                X = None
                 if fafr <= 0.44:
                     X = 1
                     Y = 0
@@ -241,6 +240,7 @@ def frfa(user, kr,new_dia_values,ηc):
                     st.text(v)
                 elif fafr > 0.44:
                     X = 0.56
+                    Y = float()
                     if fac0 >= e['Fa/C0'][1] and fac0 <= e['Fa/C0'][2]:
                         Y = 1.9
                     elif fac0 >= e['Fa/C0'][2] and fac0 <= e['Fa/C0'][3]:
@@ -251,6 +251,9 @@ def frfa(user, kr,new_dia_values,ηc):
                         Y = 1.3
                     elif fac0 >= e['Fa/C0'][5] and fac0 <= e['Fa/C0'][6]:
                         Y = 1.1
+                    li = [1.9,1.7,1.5,1.3,1.1]
+                    s = float(sum(li)/5)
+                    Y = s
                     st.text(f"X = {X}")
                     st.text(f"Y = {Y}")
                     v={"X":X,"Y":Y}
@@ -260,7 +263,7 @@ def frfa(user, kr,new_dia_values,ηc):
                 if st.checkbox("Show Fa/Fr & Fa/C0 Data"):
                     st.dataframe(e)
                 if st.checkbox("Calculate EquilentLoad (P)"):
-                    P = ((X * di['Ffb']) + (v['Y'] * di['Fa'])) * s
+                    P = ((X * di['Ffb']) + (Y * di['Fa'])) * s
                     Pu = float(new_dia_values['Pu'])
                     st.success(f"#### EquilentLoad P is **{round(P[0],2)}** N")
                     di1 = {"fac0":fac0,"fafr":fafr,"P":P[0],"X":X,"Y":Y,"Fr":Fr[0],"Fa":Fa[0],"Ffb":Ffb[0],"Frb":Frb[0]}
