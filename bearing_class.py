@@ -36,6 +36,7 @@ def show_data(bearing, e):
 def user_selection(bearing):
     dia = st.selectbox("Select the diameter", bearing.d.unique())
     new_dia_values = bearing[bearing.d == dia]
+    c = list(new_dia_values.Designation)
     l = st.radio("Select the designation",
                              list(new_dia_values.Designation))
     new_dia_values = new_dia_values[new_dia_values.Designation == l]
@@ -44,7 +45,7 @@ def user_selection(bearing):
     st.dataframe(new_dia_values.T)
     # choose_designation = int(input("Select designation from above: "))
     # new_dia_values = bearing[bearing.Designation==choose_designation]
-    return new_dia_values,dD_mean
+    return new_dia_values,dD_mean,c
 
 
 def selection_type():
@@ -126,7 +127,7 @@ def contamination_factor(new_dia_values,cleaniliness):
     else:
         pass
 
-def find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user):
+def find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user,designation):
     if st.checkbox("Askf Graph:"):
         C = float(new_dia_values['C'])
         P = float(di['P'])
@@ -151,7 +152,7 @@ def find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user):
                 st.success(f"The design is safe!,Since the Life rating {data['Lnmh']} is greater than actual Life {user['Life'][0]}  ")
                 st.balloons()
             elif float(user['Life']) > float(data['Lnmh']):
-                st.warning(f"The design is not safe!, Since the Since the Life rating {data['Lnmh']} is lesser than actual Life {user['Life'][0]}, Try changing the Designation to {[new_dia_values.Designation]}")
+                st.warning(f"The design is not safe!, Since the Since the Life rating {data['Lnmh']} is lesser than actual Life {user['Life'][0]}, Try changing the Designation to {designation}")
 
             return data
 
@@ -288,7 +289,7 @@ if x=="App":
         st.subheader("Select the Reliability Factor")
         a1 = relaiblity()
         st.subheader("Select the bearing Diameter")
-        new_dia_values,dD_mean = user_selection(bearing)
+        new_dia_values,dD_mean,designation = user_selection(bearing)
 
         st.subheader("Select Conatmination Factor")
         ηc = contamination_factor(new_dia_values,cleaniliness)
@@ -306,7 +307,7 @@ if x=="App":
 
     di = frfa(user,kr,new_dia_values,cleaniliness)
     try:
-        life_rating = find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user)
+        life_rating = find_life_rating(a1,y,y1,ηc,new_dia_values,di,askf,N,user,designation)
     except TypeError:
         st.warning('Can find askf after the Equivalent load is found!')
 if x=="Team details":
